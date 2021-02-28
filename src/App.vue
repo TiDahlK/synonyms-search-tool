@@ -6,7 +6,7 @@
       class="autocomplete"
       :search="searchBar"
       auto-select
-      @submit="getGraph"
+      @submit="getSet"
     ></autocomplete>
     <div id="input" v-if="enableAddWord">
       <h3>Add new set of synonyms</h3>
@@ -14,16 +14,16 @@
         :id="'input-bar'"
         class="autocomplete autocomplete__input"
         :search="inputBar"
-        @submit="pushToSet"
+        @submit="pushToNewSynonySet"
       >
       </autocomplete>
-      <ul id="selected-graph">
-        <li v-for="word in synonymSet" :key="word">{{ word }}</li>
+      <ul id="new-set">
+        <li v-for="word in newSynonymSet" :key="word">{{ word }}</li>
       </ul>
       <button @click="addSynonyms">Add new synonyms</button>
     </div>
-    <ul id="selected-graph">
-      <li v-for="word in selectedGraph" :key="word">
+    <ul id="selected-set">
+      <li v-for="word in selectedSet" :key="word">
         {{ word }}
       </li>
     </ul>
@@ -40,11 +40,11 @@ export default {
   },
   data() {
     return {
-      dictionary: [],
+      wordList: [],
       wordMap: {},
-      graphs: {},
-      selectedGraph: [],
-      synonymSet: [],
+      sets: {},
+      selectedSet: [],
+      newSynonymSet: [],
       enableAddWord: true,
       showSuggestion: true,
       newWordInput: "",
@@ -54,7 +54,7 @@ export default {
     searchBar(input) {
       if (input.length < 1) {
         this.enableAddWord = true;
-        this.selectedGraph = [];
+        this.selectedSet = [];
         return [];
       }
       this.enableAddWord = false;
@@ -74,93 +74,99 @@ export default {
       if (input.length < 1) {
         return [];
       }
-      return this.findWordsInDictionary(input);
+      return this.findWordsInwordList(input);
     },
-    findWordsInDictionary(input) {
-      const result = this.dictionary.filter((entry) => {
+    findWordsInwordList(input) {
+      const result = this.wordList.filter((entry) => {
         return entry.toLowerCase().startsWith(input.toLowerCase());
       });
       return result;
     },
-    getGraph(result) {
+    getSet(result) {
       if (!result) {
         return;
       }
-      this.selectedGraph = this.graphs[this.wordMap[result].graphKey].set;
+      this.selectedSet = this.sets[this.wordMap[result].setKey];
     },
-    pushToSet(result) {
+    pushToNewSynonySet(result) {
       const newWord = (result ? result : this.newWordInput)
         .toLowerCase()
         .trim();
-      if (newWord.length > 1 && !this.synonymSet.includes(newWord)) {
-        this.synonymSet.push(newWord);
+      if (newWord.length >= 1 && !this.newSynonymSet.includes(newWord)) {
+        this.newSynonymSet.push(newWord);
       }
     },
     addSynonyms() {
+      if (!this.canAddSet) {
+        return;
+      }
       const existingWords = [];
-      this.synonymSet.forEach((word) => {
+      this.newSynonymSet.forEach((word) => {
         if (this.wordMap[word]) {
           existingWords.push(this.wordMap[word]);
         }
       });
       if (existingWords.length < 1) {
         const key = this.$uuid.v4();
-        this.graphs[key] = { key, set: new Set() };
-        this.synonymSet.forEach((word) => {
+        this.sets[key] = new Set();
+        this.newSynonymSet.forEach((word) => {
           this.insertWord(word, key);
-          this.graphs[key].set.add(word);
+          this.sets[key].add(word);
         });
       } else if (existingWords.length === 1) {
-        const graphKey = existingWords[0].graphKey;
+        const setKey = existingWords[0].setKey;
 
-        this.synonymSet.forEach((word) => {
+        this.newSynonymSet.forEach((word) => {
           if (word === existingWords[0].value) {
             return;
           }
-          this.insertWord(word, graphKey);
-          this.graphs[graphKey].set.add(word);
+          this.insertWord(word, setKey);
+          this.sets[setKey].add(word);
         });
       } else if (existingWords.length > 1) {
-        const keys = existingWords.map(({ graphKey }) => graphKey);
-        const graphKeys = new Set(keys);
-        const graphKey = this.$uuid.v4();
+        const setKeys = new Set(existingWords.map(({ setKey }) => setKey));
+        const setKey = this.$uuid.v4();
         let superSet = new Set();
 
-        graphKeys.forEach((key) => {
-          superSet = this.union(superSet, this.graphs[key].set, graphKey);
-          delete this.graphs[key];
+        setKeys.forEach((key) => {
+          superSet = this.union(superSet, this.sets[key], setKey);
+          delete this.sets[key];
         });
-        this.graphs[graphKey] = { key: graphKey, set: superSet };
+        this.sets[setKey] = superSet;
 
-        this.synonymSet.forEach((word) => {
+        this.newSynonymSet.forEach((word) => {
           if (
             existingWords.some((existingWord) => existingWord.value === word)
           ) {
             return;
           }
-          this.insertWord(word, graphKey);
-          this.graphs[graphKey].set.add(word);
+          this.insertWord(word, setKey);
+          this.sets[setKey].add(word);
         });
       }
-      this.synonymSet = [];
+      this.newSynonymSet = [];
     },
-    union(setA, setB, graphKey) {
+    union(setA, setB, setKey) {
       let _union = new Set(setA);
       for (let word of setB) {
-        this.wordMap[word].graphKey = graphKey;
+        this.wordMap[word].setKey = setKey;
         _union.add(word);
       }
       return _union;
     },
-    insertWord(word, graphKey) {
+    insertWord(word, setKey) {
       this.wordMap[word] = {
         value: word,
-        graphKey,
+        setKey,
       };
-      this.dictionary.push(word);
+      this.wordList.push(word);
     },
   },
-  computed: {},
+  computed: {
+    canAddSet() {
+      return this.newSynonymSet.length > 1;
+    },
+  },
 };
 </script>
 
