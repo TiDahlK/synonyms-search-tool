@@ -5,7 +5,6 @@
       :id="'serach-bar'"
       class="autocomplete autocomplete__search"
       :search="searchBar"
-      :debounce-time="debounceTime"
       :auto-select="true"
       @submit="getSet"
     ></autocomplete>
@@ -31,7 +30,6 @@ export default {
   data() {
     return {
       showSuggestion: true,
-      debounceTime: 250,
       noSearchResults: false,
     };
   },
@@ -44,11 +42,7 @@ export default {
         this.setCurrentWord("");
         return [];
       }
-
-      if (this.getCurrentWord && this.getCurrentWord !== input) {
-        this.noSearchResults = false;
-        this.setCurrentWord("");
-      }
+      this.noSearchResults = false;
 
       this.setShowInputBar(false);
       const serchResult = this.search(input);
