@@ -1,0 +1,13 @@
+$colors: (
+  dark: #1d2d50,
+  light: #fcdab7,
+);
+
+$breakpoints: (
+  mobile: 480px,
+);
+
+@font-face {
+  font-family: "Montserrat-Regular";
+  src: url("~@/assets/fonts/Montserrat-Medium.ttf");
+}
