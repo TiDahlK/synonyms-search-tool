@@ -1,10 +1,10 @@
 <template>
   <div class="results" id="selected-set">
-    <h3>{{ getCurrentWord }} is synonymous with</h3>
-    <div>
-      <p v-for="word in displaySet" :key="word">
+    <div class="results--list">
+      <h3>{{ getCurrentWord }} is synonymous with</h3>
+      <li class="results--item" v-for="word in displaySet" :key="word">
         {{ word }}
-      </p>
+      </li>
     </div>
   </div>
 </template>
@@ -33,5 +33,11 @@ export default {
 <style lang="scss" scoped>
 .results {
   text-align: center;
+  &--list {
+    display: inline-block;
+  }
+  &--item {
+    text-align: left;
+  }
 }
 </style>
