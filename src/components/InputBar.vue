@@ -1,11 +1,7 @@
 <template>
   <div class="input-bar" id="input">
-    <div>
-      <div v-if="!getShowInputBar"></div>
-      <span :class="arrowClass" @click="setShowInputBar(!getShowInputBar)">
-      </span>
-      <div v-if="getShowInputBar"></div>
-    </div>
+    <span :class="arrowClass" @click="setShowInputBar(!getShowInputBar)">
+    </span>
     <transition name="slide-fade">
       <div v-if="getShowInputBar">
         <h3>Add new set of synonyms</h3>
@@ -13,7 +9,6 @@
           :id="'input-bar'"
           class="autocomplete autocomplete__input"
           :search="inputBar"
-          :auto-select="true"
           @submit="pushToNewSynonymSet"
         >
         </autocomplete>
@@ -158,7 +153,7 @@ export default {
   text-align: center;
 }
 .arrow {
-  transition: all 100ms ease;
+  transition: border 200ms ease;
   display: inline-block;
   width: 0;
   height: 0;
