@@ -12,9 +12,15 @@
           @submit="pushToNewSynonymSet"
         >
         </autocomplete>
-        <span id="new-set">
-          <li v-for="word in newSynonymSet" :key="word">{{ word }}</li>
-        </span>
+        <div>
+          <span class="input--list" id="new-set">
+            <div class="input--item" v-for="word in newSynonymSet" :key="word">
+              <span><img class="icon" :src="removeSymbolSrc"/></span>
+              <span>{{ word }}</span>
+            </div>
+          </span>
+        </div>
+
         <a
           @click="addSynonyms"
           class="button"
@@ -42,6 +48,7 @@ export default {
       setString: "",
       showSuggestion: true,
       newWordInput: "",
+      removeSymbolSrc: require("../assets/icons/remove-symbol.svg"),
     };
   },
   methods: {
@@ -221,5 +228,24 @@ export default {
     cursor: default !important;
     pointer-events: none;
   }
+}
+.input {
+  text-align: center;
+  &--list {
+    display: inline-block;
+    @media (min-width: #{map-get($breakpoints, mobile)}) {
+      width: 45%;
+    }
+    overflow: hidden;
+  }
+  &--item {
+    margin-top: 0.3rem;
+    text-align: left;
+    display: flex;
+  }
+}
+.icon {
+  vertical-align: middle;
+  margin-right: 0.3rem;
 }
 </style>
