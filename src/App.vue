@@ -48,10 +48,10 @@ body {
 }
 .autocomplete {
   border-radius: 25px;
-  color: map-get($colors, dark);
   position: relative;
   display: block;
   margin: 0 auto;
+  color: black;
 
   &__search {
     @media (min-width: #{map-get($breakpoints, mobile)}) {

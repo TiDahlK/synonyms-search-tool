@@ -3,7 +3,7 @@
     <span :class="arrowClass" @click="setShowInputBar(!getShowInputBar)">
     </span>
     <transition name="slide-fade">
-      <div class="input-section" v-if="getShowInputBar">
+      <div v-if="getShowInputBar">
         <h3>{{ titleLabel }}</h3>
         <autocomplete
           :id="'input-bar'"
@@ -15,7 +15,12 @@
         <span id="new-set">
           <li v-for="word in newSynonymSet" :key="word">{{ word }}</li>
         </span>
-        <a @click="addSynonyms" class="button">Confirm</a>
+        <a
+          @click="addSynonyms"
+          class="button"
+          :class="{ 'button--disabled': !canAdd }"
+          >Confirm</a
+        >
       </div>
     </transition>
   </div>
@@ -68,7 +73,7 @@ export default {
       }
     },
     addSynonyms() {
-      if (!this.canAddSet) {
+      if (!this.canAdd) {
         return;
       }
       if (this.getCurrentWord) {
@@ -136,7 +141,7 @@ export default {
       "getShowInputBar",
       "getCurrentWord",
     ]),
-    canAddSet() {
+    canAdd() {
       return (
         (this.newSynonymSet.length && this.getCurrentWord) ||
         this.newSynonymSet.length > 1
@@ -149,6 +154,11 @@ export default {
       return this.getCurrentWord
         ? `Add synonym to ${this.getCurrentWord}`
         : "Add new set of synonyms";
+    },
+  },
+  watch: {
+    getCurrentWord() {
+      this.newSynonymSet = [];
     },
   },
 };
@@ -199,12 +209,17 @@ export default {
   background-color: map-get($colors, secondary);
   text-align: center;
   transition: all 0.2s;
-}
-.button:hover {
-  background-color: map-get($colors, primary);
-}
-.button:active {
-  box-shadow: inset 0 0.6rem 2rem -0.3rem rgba(0, 0, 0, 0.15),
-    inset 0 0 0rem 0.05rem rgba(255, 255, 255, 0.12);
+  &:hover {
+    background-color: map-get($colors, primary);
+  }
+  &:active {
+    box-shadow: inset 0 0.6rem 2rem -0.3rem rgba(0, 0, 0, 0.15),
+      inset 0 0 0rem 0.05rem rgba(255, 255, 255, 0.12);
+  }
+  &--disabled {
+    opacity: 0.4;
+    cursor: default !important;
+    pointer-events: none;
+  }
 }
 </style>
