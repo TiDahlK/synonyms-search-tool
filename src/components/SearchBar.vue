@@ -5,7 +5,6 @@
       :id="'serach-bar'"
       class="autocomplete autocomplete__search"
       :search="searchBar"
-      :auto-select="true"
       @submit="getSet"
     ></autocomplete>
     <transition name="slide-fade">
