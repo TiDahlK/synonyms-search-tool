@@ -31,7 +31,7 @@ export default {
 @import "@/styles/constants.scss";
 
 body {
-  background-color: map-get($colors, dark);
+  background-color: map-get($colors, background);
 }
 #app {
   font-family: Montserrat-Regular, serif;

@@ -3,8 +3,8 @@
     <span :class="arrowClass" @click="setShowInputBar(!getShowInputBar)">
     </span>
     <transition name="slide-fade">
-      <div v-if="getShowInputBar">
-        <h3>Add new set of synonyms</h3>
+      <div class="input-section" v-if="getShowInputBar">
+        <h3>{{ titleLabel }}</h3>
         <autocomplete
           :id="'input-bar'"
           class="autocomplete autocomplete__input"
@@ -15,7 +15,7 @@
         <span id="new-set">
           <li v-for="word in newSynonymSet" :key="word">{{ word }}</li>
         </span>
-        <button @click="addSynonyms">Add New Synonyms</button>
+        <a @click="addSynonyms" class="button">Confirm</a>
       </div>
     </transition>
   </div>
@@ -70,6 +70,9 @@ export default {
     addSynonyms() {
       if (!this.canAddSet) {
         return;
+      }
+      if (this.getCurrentWord) {
+        this.newSynonymSet.push(this.getCurrentWord);
       }
       const existingWords = [];
       this.newSynonymSet.forEach((word) => {
@@ -127,17 +130,32 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getWordMap", "getSets", "getShowInputBar"]),
+    ...mapGetters([
+      "getWordMap",
+      "getSets",
+      "getShowInputBar",
+      "getCurrentWord",
+    ]),
     canAddSet() {
-      return this.newSynonymSet.length > 1;
+      return (
+        (this.newSynonymSet.length && this.getCurrentWord) ||
+        this.newSynonymSet.length > 1
+      );
     },
     arrowClass() {
       return this.getShowInputBar ? "arrow arrow--up" : "arrow arrow--down";
+    },
+    titleLabel() {
+      return this.getCurrentWord
+        ? `Add synonym to ${this.getCurrentWord}`
+        : "Add new set of synonyms";
     },
   },
 };
 </script>
 <style lang="scss" scoped>
+@import "@/styles/constants.scss";
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-in-out;
 }
@@ -153,20 +171,40 @@ export default {
   text-align: center;
 }
 .arrow {
-  transition: border 200ms ease;
+  transition: all 100ms ease;
   display: inline-block;
   width: 0;
   height: 0;
-  color: #1e5f74;
+  color: map-get($colors, secondary);
   &--up {
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
-    border-bottom: 10px solid #1e5f74;
+    border-bottom: 10px solid map-get($colors, secondary);
   }
   &--down {
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
-    border-top: 10px solid #1e5f74;
+    border-top: 10px solid map-get($colors, secondary);
   }
+}
+.button {
+  display: inline-block;
+  padding: 0.3rem 1.2rem;
+  margin: 1rem 0.3rem 0.3rem 0;
+  border-radius: 2rem;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-weight: 300;
+  color: map-get($colors, light);
+  background-color: map-get($colors, secondary);
+  text-align: center;
+  transition: all 0.2s;
+}
+.button:hover {
+  background-color: map-get($colors, primary);
+}
+.button:active {
+  box-shadow: inset 0 0.6rem 2rem -0.3rem rgba(0, 0, 0, 0.15),
+    inset 0 0 0rem 0.05rem rgba(255, 255, 255, 0.12);
 }
 </style>
