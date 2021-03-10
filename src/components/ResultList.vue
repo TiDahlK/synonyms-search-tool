@@ -7,7 +7,7 @@
       </h3>
     </transition>
     <div v-if="getSelectedSet.size" class="results--list">
-      <h3>{{ getCurrentWord }} is synonymous with</h3>
+      <h3>"{{ getCurrentWord }}" is synonymous with</h3>
       <li class="results--item" v-for="word in displaySet" :key="word">
         {{ word }}
       </li>

@@ -10,11 +10,15 @@ export default new Vuex.Store({
     sets: {},
     selectedSet: [],
     showInputBar: false,
+    hasResult: false,
     currentWord: "",
   }),
   mutations: {
     setShowInputBar(state, show) {
       state.showInputBar = show;
+    },
+    setHasResult(state, hasResult) {
+      state.hasResult = hasResult;
     },
     setCurrentWord(state, word) {
       state.currentWord = word;
@@ -77,6 +81,9 @@ export default new Vuex.Store({
     },
     getCurrentWord: (state) => {
       return state.currentWord;
+    },
+    getHasResult: (state) => {
+      return state.hasResult;
     },
   },
 });

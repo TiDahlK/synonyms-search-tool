@@ -4,15 +4,9 @@
     <autocomplete
       :id="'serach-bar'"
       class="autocomplete autocomplete__search"
-      :search="searchBar"
+      :search="searchFor"
       @submit="getSet"
     ></autocomplete>
-    <transition name="slide-fade">
-      <h3 v-if="noSearchResults && getCurrentWord">
-        No synonyms found for "{{ getCurrentWord }}", would you like to add
-        some?
-      </h3>
-    </transition>
   </div>
 </template>
 
@@ -29,37 +23,51 @@ export default {
   data() {
     return {
       showSuggestion: true,
-      noSearchResults: false,
     };
   },
   methods: {
-    ...mapMutations(["setShowInputBar", "setSelectedSet", "setCurrentWord"]),
+    ...mapMutations([
+      "setShowInputBar",
+      "setSelectedSet",
+      "setCurrentWord",
+      "setHasResult",
+    ]),
     ...mapActions(["search"]),
-    searchBar(input) {
+    searchFor(input) {
       if (!input.length) {
         this.setSelectedSet([]);
         this.setCurrentWord("");
         return [];
       }
-      this.noSearchResults = false;
 
       this.setShowInputBar(false);
       const serchResult = this.search(input);
+
       if (!serchResult.length) {
+        if (this.getCurrentWord !== input) {
+          this.setSelectedSet([]);
+        }
+        this.setHasResult(false);
         this.setCurrentWord(input);
       }
       return serchResult;
     },
     getSet(result) {
-      if (!result) {
-        console.log("true!");
+      if (!result && !this.getWordMap[this.getCurrentWord]) {
         this.setShowInputBar(true);
-        this.noSearchResults = true;
+        this.setHasResult(true);
+        this.setSelectedSet([]);
         return;
+      } else if (result) {
+        this.setHasResult(false);
+        this.setCurrentWord(result);
+        this.setSelectedSet(this.getSets[this.getWordMap[result].setKey]);
+      } else if (this.getWordMap[this.getCurrentWord]) {
+        this.setHasResult(false);
+        this.setSelectedSet(
+          this.getSets[this.getWordMap[this.getCurrentWord].setKey]
+        );
       }
-      this.noSearchResults = false;
-      this.setCurrentWord(result);
-      this.setSelectedSet(this.getSets[this.getWordMap[result].setKey]);
     },
   },
   computed: {
