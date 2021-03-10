@@ -20,11 +20,6 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "ResultList",
-
-  props: {},
-  data() {
-    return {};
-  },
   computed: {
     displaySet() {
       return Array.from(this.getSelectedSet).filter(
