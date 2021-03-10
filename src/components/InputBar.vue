@@ -8,7 +8,7 @@
         <autocomplete
           :id="'input-bar'"
           class="autocomplete autocomplete__input"
-          :search="inputBar"
+          :search="searchFor"
           @submit="pushToNewSynonymSet"
         >
         </autocomplete>
@@ -24,7 +24,7 @@
         <a
           @click="addSynonyms"
           class="button"
-          :class="{ 'button--disabled': !canAdd }"
+          :class="{ 'button--disabled': !canConfirm }"
           >Confirm</a
         >
       </div>
@@ -49,10 +49,11 @@ export default {
       showSuggestion: true,
       newWordInput: "",
       removeSymbolSrc: require("../assets/icons/remove-symbol.svg"),
+      newWord: "",
     };
   },
   methods: {
-    ...mapActions(["search", "findWordsInwordList", "insertWord"]),
+    ...mapActions(["search", "insertWord"]),
     ...mapMutations([
       "setShowInputBar",
       "setSelectedSet",
@@ -60,8 +61,9 @@ export default {
       "createSet",
       "deleteSet",
       "updateWordkey",
+      "setHasResult",
     ]),
-    inputBar(input) {
+    searchFor(input) {
       const result = this.search(input);
       if (!result.length) {
         this.showSuggestion = false;
@@ -72,15 +74,18 @@ export default {
       return result;
     },
     pushToNewSynonymSet(result) {
-      const newWord = (result ? result : this.newWordInput)
-        .toLowerCase()
-        .trim();
-      if (newWord.length >= 1 && !this.newSynonymSet.includes(newWord)) {
-        this.newSynonymSet.push(newWord);
+      this.newWord = (result ? result : this.newWordInput).toLowerCase().trim();
+      if (
+        this.newWord.length >= 1 &&
+        !this.newSynonymSet.includes(this.newWord) &&
+        this.getCurrentWord != this.newWord &&
+        !this.areSynonyms()
+      ) {
+        this.newSynonymSet.push(this.newWord);
       }
     },
     addSynonyms() {
-      if (!this.canAdd) {
+      if (!this.canConfirm) {
         return;
       }
       if (this.getCurrentWord) {
@@ -140,6 +145,15 @@ export default {
       }
       return union;
     },
+    areSynonyms() {
+      return (
+        this.getCurrentWord &&
+        !!this.getWordMap[this.getCurrentWord] &&
+        !!this.getSets[this.getWordMap[this.getCurrentWord].setKey].has(
+          this.newWord
+        )
+      );
+    },
   },
   computed: {
     ...mapGetters([
@@ -148,7 +162,7 @@ export default {
       "getShowInputBar",
       "getCurrentWord",
     ]),
-    canAdd() {
+    canConfirm() {
       return (
         (this.newSynonymSet.length && this.getCurrentWord) ||
         this.newSynonymSet.length > 1
@@ -159,7 +173,7 @@ export default {
     },
     titleLabel() {
       return this.getCurrentWord
-        ? `Add synonym to ${this.getCurrentWord}`
+        ? `Add synonym to "${this.getCurrentWord}"`
         : "Add new set of synonyms";
     },
   },
