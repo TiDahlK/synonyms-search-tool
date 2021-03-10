@@ -15,12 +15,13 @@
         <div>
           <span class="input--list" id="new-set">
             <div class="input--item" v-for="word in newSynonymSet" :key="word">
-              <span><img class="icon" :src="removeSymbolSrc"/></span>
+              <span @click="removeWord(word)"
+                ><img class="icon" :src="removeSymbolSrc"
+              /></span>
               <span>{{ word }}</span>
             </div>
           </span>
         </div>
-
         <a
           @click="addSynonyms"
           class="button"
@@ -152,6 +153,9 @@ export default {
           this.newWord
         )
       );
+    },
+    removeWord(word) {
+      this.newSynonymSet.splice(this.newSynonymSet.indexOf(word), 1);
     },
   },
   computed: {
