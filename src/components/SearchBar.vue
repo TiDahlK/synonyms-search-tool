@@ -7,17 +7,28 @@
       :search="searchFor"
       @submit="getSet"
     ></autocomplete>
+    <transition name="slide-fade">
+      <result-list
+        :showError="showError"
+        :errorMessage="errorMessage"
+        :listTitle="listTitle"
+        :wordList="displaySet"
+        @remove="removeWord($event)"
+      />
+    </transition>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions, mapGetters } from "vuex";
 import Autocomplete from "@trevoreyre/autocomplete-vue";
+import ResultList from "./ResultList.vue";
 import "@trevoreyre/autocomplete-vue/dist/style.css";
 export default {
   name: "SearchBar",
   components: {
     Autocomplete,
+    ResultList,
   },
   props: {},
   data() {
@@ -47,7 +58,7 @@ export default {
         if (this.getCurrentWord !== input) {
           this.setSelectedSet([]);
         }
-        this.setHasResult(false);
+        this.setHasResult(true);
         this.setCurrentWord(input);
       }
       return serchResult;
@@ -55,19 +66,22 @@ export default {
     getSet(result) {
       if (!result && !this.getWordMap[this.getCurrentWord]) {
         this.setShowInputBar(true);
-        this.setHasResult(true);
+        this.setHasResult(false);
         this.setSelectedSet([]);
         return;
       } else if (result) {
-        this.setHasResult(false);
+        this.setHasResult(true);
         this.setCurrentWord(result);
         this.setSelectedSet(this.getSets[this.getWordMap[result].setKey]);
       } else if (this.getWordMap[this.getCurrentWord]) {
-        this.setHasResult(false);
+        this.setHasResult(true);
         this.setSelectedSet(
           this.getSets[this.getWordMap[this.getCurrentWord].setKey]
         );
       }
+    },
+    removeWord(word) {
+      console.log(word);
     },
   },
   computed: {
@@ -76,7 +90,28 @@ export default {
       "getSets",
       "getCurrentWord",
       "getShowInputBar",
+      "getHasResult",
+      "getSize",
+      "getSelectedSet",
     ]),
+    errorMessage() {
+      return `No synonyms found for "${this.getCurrentWord}", would you like to add
+        some?`;
+    },
+    showError() {
+      return !this.getHasResult && !!this.getCurrentWord;
+    },
+    listTitle() {
+      return `"${this.getCurrentWord}" is synonymous with`;
+    },
+    displaySet() {
+      if (this.getSize && this.getSelectedSet) {
+        return Array.from(this.getSelectedSet).filter(
+          (word) => word !== this.getCurrentWord
+        );
+      }
+      return [];
+    },
   },
 };
 </script>

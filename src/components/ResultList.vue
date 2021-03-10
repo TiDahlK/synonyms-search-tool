@@ -1,16 +1,22 @@
 <template>
   <div class="results" id="selected-set">
     <transition name="slide-fade">
-      <h3 v-if="getHasResult && getCurrentWord">
-        No synonyms found for "{{ getCurrentWord }}", would you like to add
-        some?
+      <h3 v-if="showError">
+        {{ errorMessage }}
       </h3>
     </transition>
-    <div v-if="getSelectedSet.size" class="results--list">
-      <h3>"{{ getCurrentWord }}" is synonymous with</h3>
-      <li class="results--item" v-for="word in displaySet" :key="word">
-        {{ word }}
-      </li>
+    <div v-if="wordList.length" class="results--list">
+      <h3 v-if="listTitle">{{ listTitle }}</h3>
+      <div>
+        <span class="input--list" id="new-set">
+          <div class="input--item" v-for="word in wordList" :key="word">
+            <span @click="removeWord(word)"
+              ><img class="icon" :src="removeSymbolSrc"
+            /></span>
+            <span>{{ word }}</span>
+          </div>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -20,15 +26,25 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "ResultList",
-  computed: {
-    displaySet() {
-      if (this.getSize) {
-        return Array.from(this.getSelectedSet).filter(
-          (word) => word !== this.getCurrentWord
-        );
-      }
-      return [];
+  props: {
+    wordList: {
+      type: Array,
+      default: () => [],
     },
+    errorMessage: {
+      type: String,
+      default: "",
+    },
+    showError: {
+      type: Boolean,
+      default: false,
+    },
+    listTitle: {
+      type: String,
+      default: "",
+    },
+  },
+  computed: {
     ...mapGetters([
       "getSelectedSet",
       "getCurrentWord",
@@ -36,18 +52,39 @@ export default {
       "getSize",
     ]),
   },
+  data() {
+    return {
+      removeSymbolSrc: require("../assets/icons/remove-symbol.svg"),
+    };
+  },
+  methods: {
+    removeWord(word) {
+      this.$emit("remove", word);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.results {
+@import "@/styles/constants.scss";
+
+.input {
   text-align: center;
-  margin-bottom: 1rem;
   &--list {
     display: inline-block;
+    @media (min-width: #{map-get($breakpoints, mobile)}) {
+      width: 45%;
+    }
+    overflow: hidden;
   }
   &--item {
+    margin-top: 0.3rem;
     text-align: left;
+    display: flex;
   }
+}
+.icon {
+  vertical-align: middle;
+  margin-right: 0.3rem;
 }
 </style>

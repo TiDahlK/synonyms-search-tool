@@ -1,9 +1,6 @@
 <template>
   <div id="app">
     <search-bar />
-    <transition name="slide-fade">
-      <result-list />
-    </transition>
     <input-bar />
   </div>
 </template>
@@ -11,14 +8,12 @@
 <script>
 import InputBar from "./components/InputBar.vue";
 import SearchBar from "./components/SearchBar.vue";
-import ResultList from "./components/ResultList.vue";
 
 export default {
   name: "App",
   components: {
     InputBar,
     SearchBar,
-    ResultList,
   },
 };
 </script>

@@ -12,16 +12,7 @@
           @submit="pushToNewSynonymSet"
         >
         </autocomplete>
-        <div>
-          <span class="input--list" id="new-set">
-            <div class="input--item" v-for="word in newSynonymSet" :key="word">
-              <span @click="removeWord(word)"
-                ><img class="icon" :src="removeSymbolSrc"
-              /></span>
-              <span>{{ word }}</span>
-            </div>
-          </span>
-        </div>
+        <result-list :wordList="newSynonymSet" @remove="removeWord($event)" />
         <a
           @click="addSynonyms"
           class="button"
@@ -37,11 +28,13 @@
 import Autocomplete from "@trevoreyre/autocomplete-vue";
 import "@trevoreyre/autocomplete-vue/dist/style.css";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import ResultList from "./ResultList.vue";
 
 export default {
   name: "InputBar",
   components: {
     Autocomplete,
+    ResultList,
   },
   data() {
     return {
@@ -49,7 +42,6 @@ export default {
       setString: "",
       showSuggestion: true,
       newWordInput: "",
-      removeSymbolSrc: require("../assets/icons/remove-symbol.svg"),
       newWord: "",
     };
   },
@@ -139,7 +131,7 @@ export default {
       this.newSynonymSet = [];
 
       if (this.getCurrentWord) {
-        this.setHasResult(false);
+        this.setHasResult(true);
         this.setSelectedSet(
           this.getSets[this.getWordMap[this.getCurrentWord].setKey]
         );
@@ -253,24 +245,5 @@ export default {
     cursor: default !important;
     pointer-events: none;
   }
-}
-.input {
-  text-align: center;
-  &--list {
-    display: inline-block;
-    @media (min-width: #{map-get($breakpoints, mobile)}) {
-      width: 45%;
-    }
-    overflow: hidden;
-  }
-  &--item {
-    margin-top: 0.3rem;
-    text-align: left;
-    display: flex;
-  }
-}
-.icon {
-  vertical-align: middle;
-  margin-right: 0.3rem;
 }
 </style>
