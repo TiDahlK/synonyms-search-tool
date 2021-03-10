@@ -32,7 +32,7 @@ export default {
       "setCurrentWord",
       "setHasResult",
     ]),
-    ...mapActions(["search"]),
+    ...mapActions(["findWordsInList"]),
     searchFor(input) {
       if (!input.length) {
         this.setSelectedSet([]);
@@ -41,7 +41,7 @@ export default {
       }
 
       this.setShowInputBar(false);
-      const serchResult = this.search(input);
+      const serchResult = this.findWordsInList(input);
 
       if (!serchResult.length) {
         if (this.getCurrentWord !== input) {

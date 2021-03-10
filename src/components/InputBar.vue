@@ -53,10 +53,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["search", "insertWord"]),
+    ...mapActions(["findWordsInList", "insertWord"]),
     ...mapMutations([
       "setShowInputBar",
-      "setSelectedSet",
       "addWordToSet",
       "createSet",
       "deleteSet",
@@ -64,7 +63,7 @@ export default {
       "setHasResult",
     ]),
     searchFor(input) {
-      const result = this.search(input);
+      const result = this.findWordsInList(input);
       if (!result.length) {
         this.showSuggestion = false;
         this.newWordInput = input;

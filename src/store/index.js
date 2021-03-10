@@ -49,13 +49,10 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    search({ dispatch }, input) {
+    findWordsInList({ state }, input) {
       if (input.length < 1) {
         return [];
       }
-      return dispatch("findWordsInwordList", input);
-    },
-    findWordsInwordList({ state }, input) {
       const result = state.wordList.filter((entry) => {
         return entry.toLowerCase().startsWith(input.toLowerCase());
       });
