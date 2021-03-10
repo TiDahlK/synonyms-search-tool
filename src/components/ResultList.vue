@@ -22,11 +22,19 @@ export default {
   name: "ResultList",
   computed: {
     displaySet() {
-      return Array.from(this.getSelectedSet).filter(
-        (word) => word !== this.getCurrentWord
-      );
+      if (this.getSize) {
+        return Array.from(this.getSelectedSet).filter(
+          (word) => word !== this.getCurrentWord
+        );
+      }
+      return [];
     },
-    ...mapGetters(["getSelectedSet", "getCurrentWord", "getHasResult"]),
+    ...mapGetters([
+      "getSelectedSet",
+      "getCurrentWord",
+      "getHasResult",
+      "getSize",
+    ]),
   },
 };
 </script>

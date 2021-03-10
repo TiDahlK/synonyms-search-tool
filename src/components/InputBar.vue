@@ -62,6 +62,7 @@ export default {
       "deleteSet",
       "updateWordkey",
       "setHasResult",
+      "setSelectedSet",
     ]),
     searchFor(input) {
       const result = this.findWordsInList(input);
@@ -136,6 +137,13 @@ export default {
         });
       }
       this.newSynonymSet = [];
+
+      if (this.getCurrentWord) {
+        this.setHasResult(false);
+        this.setSelectedSet(
+          this.getSets[this.getWordMap[this.getCurrentWord].setKey]
+        );
+      }
     },
     union(setA, setB, setKey) {
       let union = new Set(setA);

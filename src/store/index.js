@@ -12,6 +12,7 @@ export default new Vuex.Store({
     showInputBar: false,
     hasResult: false,
     currentWord: "",
+    currentSetSize: 0,
   }),
   mutations: {
     setShowInputBar(state, show) {
@@ -24,7 +25,8 @@ export default new Vuex.Store({
       state.currentWord = word;
     },
     setSelectedSet(state, set) {
-      Vue.set(state, "selectedSet", set);
+      state.selectedSet = set;
+      state.currentSetSize = set.size;
     },
     createSet(state, { setKey, set = new Set() }) {
       state.sets[setKey] = set;
@@ -81,6 +83,9 @@ export default new Vuex.Store({
     },
     getHasResult: (state) => {
       return state.hasResult;
+    },
+    getSize: (state) => {
+      return state.currentSetSize;
     },
   },
 });
