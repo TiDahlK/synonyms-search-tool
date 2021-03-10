@@ -2,7 +2,7 @@
   <div id="app">
     <search-bar />
     <transition name="slide-fade">
-      <selected-set v-if="getSelectedSet.size" />
+      <selected-set />
     </transition>
     <input-bar />
   </div>
@@ -11,7 +11,6 @@
 <script>
 import InputBar from "./components/InputBar.vue";
 import SearchBar from "./components/SearchBar.vue";
-import { mapGetters } from "vuex";
 import SelectedSet from "./components/SelectedSet.vue";
 
 export default {
@@ -20,9 +19,6 @@ export default {
     InputBar,
     SearchBar,
     SelectedSet,
-  },
-  computed: {
-    ...mapGetters(["getShowInputBar", "getSelectedSet"]),
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="results" id="selected-set">
+  <div v-if="getSelectedSet.size" class="results" id="selected-set">
     <div class="results--list">
       <h3>{{ getCurrentWord }} is synonymous with</h3>
       <li class="results--item" v-for="word in displaySet" :key="word">
