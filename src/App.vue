@@ -2,7 +2,7 @@
   <div id="app">
     <search-bar />
     <transition name="slide-fade">
-      <selected-set />
+      <result-list />
     </transition>
     <input-bar />
   </div>
@@ -11,14 +11,14 @@
 <script>
 import InputBar from "./components/InputBar.vue";
 import SearchBar from "./components/SearchBar.vue";
-import SelectedSet from "./components/SelectedSet.vue";
+import ResultList from "./components/ResultList.vue";
 
 export default {
   name: "App",
   components: {
     InputBar,
     SearchBar,
-    SelectedSet,
+    ResultList,
   },
 };
 </script>

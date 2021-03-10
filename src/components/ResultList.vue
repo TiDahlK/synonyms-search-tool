@@ -1,6 +1,12 @@
 <template>
-  <div v-if="getSelectedSet.size" class="results" id="selected-set">
-    <div class="results--list">
+  <div class="results" id="selected-set">
+    <transition name="slide-fade">
+      <h3 v-if="getHasResult && getCurrentWord">
+        No synonyms found for "{{ getCurrentWord }}", would you like to add
+        some?
+      </h3>
+    </transition>
+    <div v-if="getSelectedSet.size" class="results--list">
       <h3>{{ getCurrentWord }} is synonymous with</h3>
       <li class="results--item" v-for="word in displaySet" :key="word">
         {{ word }}
@@ -13,7 +19,7 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "SelectedSet",
+  name: "ResultList",
 
   props: {},
   data() {
@@ -25,7 +31,7 @@ export default {
         (word) => word !== this.getCurrentWord
       );
     },
-    ...mapGetters(["getSelectedSet", "getCurrentWord"]),
+    ...mapGetters(["getSelectedSet", "getCurrentWord", "getHasResult"]),
   },
 };
 </script>
@@ -33,6 +39,7 @@ export default {
 <style lang="scss" scoped>
 .results {
   text-align: center;
+  margin-bottom: 1rem;
   &--list {
     display: inline-block;
   }
