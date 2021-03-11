@@ -43,7 +43,7 @@ export default {
       "setCurrentWord",
       "setHasResult",
     ]),
-    ...mapActions(["findWordsInList"]),
+    ...mapActions(["findWordsInList", "removeWord"]),
     searchFor(input) {
       if (!input.length) {
         this.setSelectedSet([]);
@@ -80,16 +80,12 @@ export default {
         );
       }
     },
-    removeWord(word) {
-      console.log(word);
-    },
   },
   computed: {
     ...mapGetters([
       "getWordMap",
       "getSets",
       "getCurrentWord",
-      "getShowInputBar",
       "getHasResult",
       "getSize",
       "getSelectedSet",
@@ -99,7 +95,7 @@ export default {
         some?`;
     },
     showError() {
-      return !this.getHasResult && !!this.getCurrentWord;
+      return (!this.getHasResult || this.getSize <= 1) && !!this.getCurrentWord;
     },
     listTitle() {
       return `"${this.getCurrentWord}" is synonymous with`;
