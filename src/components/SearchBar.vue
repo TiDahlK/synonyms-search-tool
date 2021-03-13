@@ -1,5 +1,5 @@
 <template>
-  <div class="search-bar" id="search">
+  <div class="search-bar">
     <h1>Synonyms Search Tool</h1>
     <autocomplete
       :id="'serach-bar'"
@@ -9,6 +9,7 @@
     ></autocomplete>
     <transition name="slide-fade">
       <result-list
+        :resultId="'search-result'"
         :showError="showError"
         :errorMessage="errorMessage"
         :listTitle="listTitle"
@@ -50,7 +51,6 @@ export default {
         this.setCurrentWord("");
         return [];
       }
-
       this.setShowInputBar(false);
       const serchResult = this.findWordsInList(input);
 

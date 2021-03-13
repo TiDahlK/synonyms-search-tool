@@ -1,16 +1,16 @@
 <template>
-  <div class="results" id="selected-set">
+  <div>
     <transition name="slide-fade">
       <h3 v-if="showError">
         {{ errorMessage }}
       </h3>
     </transition>
-    <div v-if="wordList.length" class="results--list">
-      <h3 v-if="listTitle">{{ listTitle }}</h3>
+    <div v-if="wordList.length">
+      <h3 id="result-title" v-if="listTitle">{{ listTitle }}</h3>
       <div>
-        <span class="input--list" id="new-set">
-          <div class="input--item" v-for="word in wordList" :key="word">
-            <span @click="removeWord(word)"
+        <span class="input__list" :id="resultId">
+          <div class="input__item" v-for="word in wordList" :key="word">
+            <span :id="`${resultId}-remove_${word}`" @click="removeWord(word)"
               ><img class="icon" :src="removeSymbolSrc"
             /></span>
             <span>{{ word }}</span>
@@ -27,6 +27,10 @@ import { mapGetters } from "vuex";
 export default {
   name: "ResultList",
   props: {
+    resultId: {
+      type: String,
+      default: "result-list",
+    },
     wordList: {
       type: Array,
       default: () => [],
@@ -70,14 +74,14 @@ export default {
 
 .input {
   text-align: center;
-  &--list {
+  &__list {
     display: inline-block;
     @media (min-width: #{map-get($breakpoints, mobile)}) {
       width: 45%;
     }
     overflow: hidden;
   }
-  &--item {
+  &__item {
     margin-top: 0.3rem;
     text-align: left;
     display: flex;

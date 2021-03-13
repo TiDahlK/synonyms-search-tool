@@ -12,7 +12,11 @@
           @submit="pushToNewSynonymSet"
         >
         </autocomplete>
-        <result-list :wordList="newSynonymSet" @remove="removeWord($event)" />
+        <result-list
+          :resultId="'input-result'"
+          :wordList="newSynonymSet"
+          @remove="removeWord($event)"
+        />
         <a
           @click="addSynonyms"
           class="button"
@@ -189,18 +193,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/styles/constants.scss";
-
-.slide-fade-enter-active {
-  transition: all 0.3s ease-in-out;
-}
-.slide-fade-leave-active {
-  transition: all 0.2s ease;
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateY(-20px);
-  opacity: 0;
-}
 .input-bar {
   text-align: center;
 }
