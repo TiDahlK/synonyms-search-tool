@@ -51,6 +51,8 @@ export default {
         this.setCurrentWord("");
         return [];
       }
+
+      input = input.toLowerCase();
       this.setShowInputBar(false);
       const serchResult = this.findWordsInList(input);
 
