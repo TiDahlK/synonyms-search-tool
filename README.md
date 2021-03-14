@@ -1,4 +1,4 @@
-# synonyms-search-tool
+# Synonyms-search-tool
 "Synonyms search tool" is a VueJs app that allows users to search for and add new synonyms.
 
 ## Prerequisites
