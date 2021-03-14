@@ -9,6 +9,8 @@ node_modules
 .firebaserc
 /cypress/screenshots
 /cypress/videos
+/cypress/fixtures
+/cypress/plugins
 
 # Log files
 npm-debug.log*
