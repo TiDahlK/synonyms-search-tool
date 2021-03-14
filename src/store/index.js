@@ -74,12 +74,17 @@ export default new Vuex.Store({
       commit("addWordToMap", { word, setKey });
       commit("addWordToList", word);
     },
-    removeWord({ state, commit }, word) {
+    removeWord({ dispatch, state, commit }, word) {
       const setKey = state.wordMap[word].setKey;
 
       commit("removeWordFromMap", word);
       commit("removeWordFromList", word);
       commit("removeWordFromSet", { word, setKey });
+
+      if (state.sets[setKey].size === 1) {
+        dispatch("removeWord", state.sets[setKey].values().next().value);
+        commit("deleteSet", setKey);
+      }
     },
   },
   getters: {
