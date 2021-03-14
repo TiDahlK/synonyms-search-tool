@@ -9,13 +9,13 @@
           :id="'input-bar'"
           class="autocomplete autocomplete__input"
           :search="searchFor"
-          @submit="pushToNewSynonymSet"
+          @submit="pushToInputSet"
         >
         </autocomplete>
         <result-list
           :resultId="'input-result'"
-          :wordList="newSynonymSet"
-          @remove="removeWord($event)"
+          :wordList="inputSet"
+          @remove="removeFromInputSet($event)"
         />
         <a
           @click="addSynonyms"
@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      newSynonymSet: [],
+      inputSet: [],
       newWordInput: "",
       newWord: "",
     };
@@ -62,79 +62,91 @@ export default {
       const result = this.findWordsInList(input);
       if (!result.length) {
         this.newWordInput = input;
-      } 
-      return result;
-    },
-    pushToNewSynonymSet(result) {
-      this.newWord = (result ? result : this.newWordInput).toLowerCase().trim();
-      if (
-        this.newWord.length >= 1 &&
-        !this.newSynonymSet.includes(this.newWord) &&
-        this.getCurrentWord != this.newWord &&
-        !this.areSynonyms()
-      ) {
-        this.newSynonymSet.push(this.newWord);
       }
+      return result;
     },
     addSynonyms() {
       if (!this.canConfirm) {
         return;
       }
       if (this.getCurrentWord) {
-        this.newSynonymSet.push(this.getCurrentWord);
+        this.inputSet.push(this.getCurrentWord);
       }
+      const existingWords = this.getExistingWords();
+
+      if (!existingWords.length) {
+        this.addNewSet();
+      } else if (existingWords.length === 1) {
+        this.pushToExistingSet(existingWords);
+      } else if (existingWords.length > 1) {
+        this.unionSets(existingWords);
+      }
+      this.inputSet = [];
+
+      if (this.getCurrentWord) {
+        this.setHasResult(true);
+        this.setSelectedSet(this.getSetOnWord(this.getCurrentWord));
+      }
+    },
+    pushToInputSet(result) {
+      this.newWord = (result ? result : this.newWordInput).toLowerCase().trim();
+      if (
+        this.newWord.length &&
+        !this.inputSet.includes(this.newWord) &&
+        this.getCurrentWord != this.newWord &&
+        !this.areSynonyms()
+      ) {
+        this.inputSet.push(this.newWord);
+      }
+    },
+    removeFromInputSet(word) {
+      this.inputSet.splice(this.inputSet.indexOf(word), 1);
+    },
+    getExistingWords() {
       const existingWords = [];
-      this.newSynonymSet.forEach((word) => {
+      this.inputSet.forEach((word) => {
         if (this.getWordMap[word]) {
           existingWords.push(this.getWordMap[word]);
         }
       });
-      if (existingWords.length < 1) {
-        const setKey = this.$uuid.v4();
-        this.createSet({ setKey });
-        this.newSynonymSet.forEach((word) => {
-          this.insertWord({ word, setKey });
-          this.addWordToSet({ word, setKey });
-        });
-      } else if (existingWords.length === 1) {
-        const setKey = existingWords[0].setKey;
+      return existingWords;
+    },
+    addNewSet() {
+      const setKey = this.$uuid.v4();
+      this.createSet({ setKey });
+      this.inputSet.forEach((word) => {
+        this.insertWord({ word, setKey });
+        this.addWordToSet({ word, setKey });
+      });
+    },
+    pushToExistingSet(existingWords) {
+      const setKey = existingWords[0].setKey;
+      this.inputSet.forEach((word) => {
+        if (word === existingWords[0].value) {
+          return;
+        }
+        this.insertWord({ word, setKey });
+        this.addWordToSet({ word, setKey });
+      });
+    },
+    unionSets(existingWords) {
+      const setKeys = new Set(existingWords.map(({ setKey }) => setKey));
+      const setKey = this.$uuid.v4();
+      let union = new Set();
 
-        this.newSynonymSet.forEach((word) => {
-          if (word === existingWords[0].value) {
-            return;
-          }
-          this.insertWord({ word, setKey });
-          this.addWordToSet({ word, setKey });
-        });
-      } else if (existingWords.length > 1) {
-        const setKeys = new Set(existingWords.map(({ setKey }) => setKey));
-        const setKey = this.$uuid.v4();
-        let union = new Set();
+      setKeys.forEach((key) => {
+        union = this.union(union, this.getSets[key], setKey);
+        this.deleteSet(key);
+      });
+      this.createSet({ setKey, set: union });
 
-        setKeys.forEach((key) => {
-          union = this.union(union, this.getSets[key], setKey);
-          this.deleteSet(key);
-        });
-        this.createSet({ setKey, set: union });
-
-        this.newSynonymSet.forEach((word) => {
-          if (
-            existingWords.some((existingWord) => existingWord.value === word)
-          ) {
-            return;
-          }
-          this.insertWord({ word, setKey });
-          this.addWordToSet({ word, setKey });
-        });
-      }
-      this.newSynonymSet = [];
-
-      if (this.getCurrentWord) {
-        this.setHasResult(true);
-        this.setSelectedSet(
-          this.getSets[this.getWordMap[this.getCurrentWord].setKey]
-        );
-      }
+      this.inputSet.forEach((word) => {
+        if (existingWords.some((existingWord) => existingWord.value === word)) {
+          return;
+        }
+        this.insertWord({ word, setKey });
+        this.addWordToSet({ word, setKey });
+      });
     },
     union(setA, setB, setKey) {
       let union = new Set(setA);
@@ -148,13 +160,8 @@ export default {
       return (
         this.getCurrentWord &&
         !!this.getWordMap[this.getCurrentWord] &&
-        !!this.getSets[this.getWordMap[this.getCurrentWord].setKey].has(
-          this.newWord
-        )
+        !!this.getSetOnWord(this.getCurrentWord).has(this.newWord)
       );
-    },
-    removeWord(word) {
-      this.newSynonymSet.splice(this.newSynonymSet.indexOf(word), 1);
     },
   },
   computed: {
@@ -163,11 +170,12 @@ export default {
       "getSets",
       "getShowInputBar",
       "getCurrentWord",
+      "getSetOnWord",
     ]),
     canConfirm() {
       return (
-        (this.newSynonymSet.length && this.getCurrentWord) ||
-        this.newSynonymSet.length > 1
+        (this.inputSet.length && this.getCurrentWord) ||
+        this.inputSet.length > 1
       );
     },
     arrowClass() {
@@ -181,7 +189,7 @@ export default {
   },
   watch: {
     getCurrentWord() {
-      this.newSynonymSet = [];
+      this.inputSet = [];
     },
   },
 };

@@ -89,6 +89,9 @@ export default new Vuex.Store({
     getSets: (state) => {
       return state.sets;
     },
+    getSetOnWord: (state) => (word) => {
+      return state.sets[state.wordMap[word].setKey];
+    },
     getSelectedSet: (state) => {
       return state.selectedSet;
     },
