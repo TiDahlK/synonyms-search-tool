@@ -1,6 +1,17 @@
 # synonyms-search-tool
+"Synonyms search tool" is a VueJs app that allows users to search for and add new synonyms.
+
+## Prerequisites
+[Node.js](https://nodejs.org) version 8.9 or above is required to run the app.
 
 ## Project setup
+Get the code by cloning this repository using git
+
+    > git clone https://github.com/TiDahlK/synonyms-search-tool.git
+
+
+Once cloned, open the terminal in the project directory, and run:
+
 ```
 npm install
 ```
@@ -20,5 +31,13 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Testing
+This project uses the testing framework  [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell), testing can be run headless using:
+```
+npm run test
+```
+... Or headed using
+
+```
+npm run cy:open
+```
