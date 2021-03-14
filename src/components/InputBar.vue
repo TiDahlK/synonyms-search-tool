@@ -200,11 +200,17 @@ export default {
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
     border-bottom: 10px solid map-get($colors, secondary);
+    &:hover {
+      border-bottom: 10px solid map-get($colors, primary);
+    }
   }
   &--down {
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
     border-top: 10px solid map-get($colors, secondary);
+    &:hover {
+      border-top: 10px solid map-get($colors, primary);
+    }
   }
 }
 .button {
