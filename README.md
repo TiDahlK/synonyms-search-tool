@@ -32,7 +32,14 @@ npm run lint
 ```
 
 ### Testing
-This project uses the testing framework  [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell), testing can be run headless using:
+This project uses the testing framework  [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell).
+
+To run tests, first start up the project locally using:
+```
+npm run serve
+```
+
+Tests can either be run headless using:
 ```
 npm run test
 ```
