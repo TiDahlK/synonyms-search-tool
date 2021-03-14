@@ -31,12 +31,6 @@ export default {
     Autocomplete,
     ResultList,
   },
-  props: {},
-  data() {
-    return {
-      showSuggestion: true,
-    };
-  },
   methods: {
     ...mapMutations([
       "setShowInputBar",
@@ -65,28 +59,34 @@ export default {
       }
       return serchResult;
     },
-    getSet(result) {
-      if (!result && !this.getWordMap[this.getCurrentWord]) {
-        this.setShowInputBar(true);
-        this.setHasResult(false);
-        this.setSelectedSet([]);
-        return;
-      } else if (result) {
-        this.setHasResult(true);
-        this.setCurrentWord(result);
-        this.setSelectedSet(this.getSets[this.getWordMap[result].setKey]);
+    getSet(serchResult) {
+      if (!serchResult && !this.getWordMap[this.getCurrentWord]) {
+        this.handleNoResult();
+      } else if (serchResult) {
+        this.handleSearchResult(serchResult);
       } else if (this.getWordMap[this.getCurrentWord]) {
-        this.setHasResult(true);
-        this.setSelectedSet(
-          this.getSets[this.getWordMap[this.getCurrentWord].setKey]
-        );
+        this.handleCurrentWordResult();
       }
+    },
+    handleNoResult() {
+      this.setShowInputBar(true);
+      this.setHasResult(false);
+      this.setSelectedSet([]);
+    },
+    handleSearchResult(serchResult) {
+      this.setHasResult(true);
+      this.setCurrentWord(serchResult);
+      this.setSelectedSet(this.getSetOnWord(serchResult));
+    },
+    handleCurrentWordResult() {
+      this.setHasResult(true);
+      this.setSelectedSet(this.getSetOnWord(this.getCurrentWord));
     },
   },
   computed: {
     ...mapGetters([
       "getWordMap",
-      "getSets",
+      "getSetOnWord",
       "getCurrentWord",
       "getHasResult",
       "getSize",
