@@ -43,8 +43,6 @@ export default {
   data() {
     return {
       newSynonymSet: [],
-      setString: "",
-      showSuggestion: true,
       newWordInput: "",
       newWord: "",
     };
@@ -63,11 +61,8 @@ export default {
     searchFor(input) {
       const result = this.findWordsInList(input);
       if (!result.length) {
-        this.showSuggestion = false;
         this.newWordInput = input;
-      } else {
-        this.showSuggestion = true;
-      }
+      } 
       return result;
     },
     pushToNewSynonymSet(result) {
@@ -201,7 +196,6 @@ export default {
   display: inline-block;
   width: 0;
   height: 0;
-  color: map-get($colors, secondary);
   &--up {
     border-left: 30px solid transparent;
     border-right: 30px solid transparent;
